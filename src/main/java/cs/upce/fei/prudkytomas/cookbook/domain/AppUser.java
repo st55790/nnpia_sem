@@ -47,4 +47,10 @@ public class AppUser {
 
     @ManyToMany(mappedBy = "users")
     private List<Role> roles = Collections.emptyList();
+
+    public AppUser(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 }

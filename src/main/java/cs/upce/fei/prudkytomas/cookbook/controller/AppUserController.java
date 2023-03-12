@@ -1,30 +1,41 @@
 package cs.upce.fei.prudkytomas.cookbook.controller;
 
-import cs.upce.fei.prudkytomas.cookbook.domain.AppUser;
+import cs.upce.fei.prudkytomas.cookbook.dto.AppUserDtoIn;
+import cs.upce.fei.prudkytomas.cookbook.dto.AppUserDtoOut;
+import cs.upce.fei.prudkytomas.cookbook.service.AppUserService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
+@AllArgsConstructor
 @RestController
 @RequestMapping("/users")
 public class AppUserController {
 
+    private final AppUserService appUserService;
+
     @GetMapping
-    public String getAppUsers(){
-        return "Get list of movies";
+    public ResponseEntity<?> getAppUsers(){
+        return ResponseEntity.ok(appUserService.getAllAppUsers());
     }
 
     @GetMapping("/{id}")
-    public String findUserById(@PathVariable Long id){
-        return "One user";
+    public ResponseEntity<?> findUserById(@PathVariable Long id){
+
+        return ResponseEntity.ok(appUserService.findById(id));
     }
 
     @PostMapping
-    public String createAppUser(){
-        return "Create AppUser";
+    public ResponseEntity<AppUserDtoOut> createAppUser(@RequestBody @Validated AppUserDtoIn appUserDtoIn){
+        return ResponseEntity.ok(appUserService.create(appUserDtoIn));
     }
 
-    @PutMapping
-    public String updateAppUser(){
-        return "Update AppUser";
+    @PutMapping("{/id}")
+    public ResponseEntity<AppUserDtoOut> updateAppUser(@RequestBody @Validated AppUserDtoIn appUserDtoIn, @PathVariable Long id){
+        return ResponseEntity.ok(appUserService.update(id, appUserDtoIn));
     }
 
     @DeleteMapping("/{id}")
