@@ -1,6 +1,7 @@
 package cs.upce.fei.prudkytomas.cookbook.controller;
 
 import cs.upce.fei.prudkytomas.cookbook.dto.CategoryDtoInOut;
+import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDtoInOut> findCategoryById(@PathVariable Long id){
+    public ResponseEntity<CategoryDtoInOut> findCategoryById(@PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(categoryService.findById(id));
     }
 
@@ -32,12 +33,12 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDtoInOut> updateCategory(@RequestBody @Validated CategoryDtoInOut category, @PathVariable Long id){
+    public ResponseEntity<CategoryDtoInOut> updateCategory(@RequestBody @Validated CategoryDtoInOut category, @PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(categoryService.update(id, category));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Long id){
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id) throws ResourceNotFoundException {
         categoryService.delete(id);
         return ResponseEntity.ok().build();
     }

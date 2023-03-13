@@ -1,12 +1,17 @@
 package cs.upce.fei.prudkytomas.cookbook.dto;
 
 import cs.upce.fei.prudkytomas.cookbook.domain.AppUser;
+import cs.upce.fei.prudkytomas.cookbook.domain.Category;
+import cs.upce.fei.prudkytomas.cookbook.domain.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotBlank;
+import java.util.Collections;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,24 +19,24 @@ import javax.validation.constraints.NotBlank;
 public class RecipeDtoInOut {
 
     @NotBlank
-    @Column
     private String name;
 
-    @Column
     private String description;
 
     @NotBlank
-    @Column
     private String procedure;
 
-    @Column
     private Integer prepareTime;
 
-    @Column
     private Integer numberOfPortions;
 
-    @Column
     private double rating;
 
     private AppUser owner;
+
+    private List<String> linksToImages = Collections.emptyList();
+
+    private List<Ingredient> ingredients = Collections.emptyList();
+
+    private List<Category> categories = Collections.emptyList();
 }

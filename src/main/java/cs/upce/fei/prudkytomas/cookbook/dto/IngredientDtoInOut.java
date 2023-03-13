@@ -13,6 +13,5 @@ import javax.validation.constraints.NotBlank;
 public class IngredientDtoInOut {
 
     @NotBlank
-    @Column
     private String name;
 }

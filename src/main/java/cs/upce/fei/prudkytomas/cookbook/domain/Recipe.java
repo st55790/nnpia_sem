@@ -62,4 +62,16 @@ public class Recipe {
 
     @ManyToOne
     private AppUser owner;
+
+    public Recipe(String name, String description, String procedure, Integer prepareTime, Integer numberOfPortions, List<String> linksToImages, List<Ingredient> ingredients, List<Category> categories, AppUser owner) {
+        this.name = name;
+        this.description = description;
+        this.procedure = procedure;
+        this.prepareTime = prepareTime;
+        this.numberOfPortions = numberOfPortions;
+        this.linksToImages = linksToImages;
+        this.ingredients = ingredients;
+        this.categories = categories;
+        this.owner = owner;
+    }
 }

@@ -3,6 +3,7 @@ package cs.upce.fei.prudkytomas.cookbook.service;
 import cs.upce.fei.prudkytomas.cookbook.domain.Role;
 import cs.upce.fei.prudkytomas.cookbook.dto.IngredientDtoInOut;
 import cs.upce.fei.prudkytomas.cookbook.dto.RoleDtoInOut;
+import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.repository.RoleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,20 +28,23 @@ public class RoleService {
         return dtoList;
     }
 
-    public void delete(Long id) {
-        roleRepository.delete(roleRepository.findById(id).orElse(null));
+    public void delete(Long id) throws ResourceNotFoundException {
+        roleRepository.delete(roleRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format("Role %s not found!", id))));
     }
 
-    public RoleDtoInOut findById(Long id) {
-        return CoversionService.toDto(roleRepository.findById(id).orElse(null));
+    public RoleDtoInOut findById(Long id) throws ResourceNotFoundException {
+        return CoversionService.toDto(roleRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format("Role %s not found!", id))));
     }
 
     public RoleDtoInOut create(RoleDtoInOut role) {
         return CoversionService.toDto(roleRepository.save(CoversionService.toEntity(role)));
     }
 
-    public RoleDtoInOut update(Long id, RoleDtoInOut dto) {
-        Role role = roleRepository.findById(id).orElse(null);
+    public RoleDtoInOut update(Long id, RoleDtoInOut dto) throws ResourceNotFoundException {
+        Role role = roleRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format("Role %s not found!", id)));
         role.setName(dto.getName());
         return CoversionService.toDto(roleRepository.save(role));
     }

@@ -2,6 +2,7 @@ package cs.upce.fei.prudkytomas.cookbook.controller;
 
 import cs.upce.fei.prudkytomas.cookbook.dto.CategoryDtoInOut;
 import cs.upce.fei.prudkytomas.cookbook.dto.IngredientDtoInOut;
+import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.service.CategoryService;
 import cs.upce.fei.prudkytomas.cookbook.service.IngredientService;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class IngredientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IngredientDtoInOut> findIngredientById(@PathVariable Long id){
+    public ResponseEntity<IngredientDtoInOut> findIngredientById(@PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(ingredientService.findById(id));
     }
 
@@ -34,12 +35,12 @@ public class IngredientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngredientDtoInOut> updateIngredient(@RequestBody @Validated IngredientDtoInOut ingredient, @PathVariable Long id){
+    public ResponseEntity<IngredientDtoInOut> updateIngredient(@RequestBody @Validated IngredientDtoInOut ingredient, @PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(ingredientService.update(id, ingredient));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteIngredient(@PathVariable Long id){
+    public ResponseEntity<?> deleteIngredient(@PathVariable Long id) throws ResourceNotFoundException {
         ingredientService.delete(id);
         return ResponseEntity.ok().build();
     }

@@ -3,6 +3,7 @@ package cs.upce.fei.prudkytomas.cookbook.service;
 import cs.upce.fei.prudkytomas.cookbook.domain.AppUser;
 import cs.upce.fei.prudkytomas.cookbook.dto.AppUserDtoIn;
 import cs.upce.fei.prudkytomas.cookbook.dto.AppUserDtoOut;
+import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.repository.AppUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.core.convert.ConversionService;
@@ -36,19 +37,20 @@ public class AppUserService {
         return dtoList;
     }
 
-    public AppUserDtoOut findById(Long id) {
-        return CoversionService.toDto(appUserRepository.findById(id).orElse(null));
+    public AppUserDtoOut findById(Long id) throws ResourceNotFoundException {
+        AppUser appUser = appUserRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("User %s not found!", id)));
+        return CoversionService.toDto(appUser);
     }
 
-    public AppUserDtoOut update(Long id, AppUserDtoIn appUserDtoIn) {
-        AppUser appUser = appUserRepository.findById(id).orElse(null);
+    public AppUserDtoOut update(Long id, AppUserDtoIn appUserDtoIn) throws ResourceNotFoundException {
+        AppUser appUser = appUserRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("User %s not found!", id)));
         appUser.setUsername(appUserDtoIn.getUsername());
         appUser.setPassword(appUserDtoIn.getPassword());
         appUser.setEmail(appUserDtoIn.getEmail());
         return CoversionService.toDto(appUserRepository.save(appUser));
     }
 
-    public void delete(Long id){
-        appUserRepository.delete(appUserRepository.findById(id).orElse(null));
+    public void delete(Long id) throws ResourceNotFoundException {
+        appUserRepository.delete(appUserRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("User %s not found!", id))));
     }
 }

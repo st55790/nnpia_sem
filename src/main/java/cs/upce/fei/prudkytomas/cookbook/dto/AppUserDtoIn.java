@@ -16,16 +16,13 @@ public class AppUserDtoIn {
 
     @NotBlank
     @Size(min = 5, max = 32, message = "Username must be between 5 and 32 characters long")
-    @Column
     private String username;
 
     @NotBlank
     @Size(min = 6)
-    @Column
     private String password;
 
     @NotBlank
     @Email
-    @Column
     private String email;
 }

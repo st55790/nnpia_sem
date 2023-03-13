@@ -1,9 +1,6 @@
 package cs.upce.fei.prudkytomas.cookbook.service;
 
-import cs.upce.fei.prudkytomas.cookbook.domain.AppUser;
-import cs.upce.fei.prudkytomas.cookbook.domain.Category;
-import cs.upce.fei.prudkytomas.cookbook.domain.Ingredient;
-import cs.upce.fei.prudkytomas.cookbook.domain.Role;
+import cs.upce.fei.prudkytomas.cookbook.domain.*;
 import cs.upce.fei.prudkytomas.cookbook.dto.*;
 
 public class CoversionService {
@@ -38,5 +35,32 @@ public class CoversionService {
 
     public static Role toEntity(RoleDtoInOut dto){
         return new Role(dto.getName());
+    }
+
+    public static RecipeDtoInOut toDto(Recipe recipe) {
+        return new RecipeDtoInOut(
+                recipe.getName(),
+                recipe.getDescription(),
+                recipe.getProcedure(),
+                recipe.getPrepareTime(),
+                recipe.getNumberOfPortions(),
+                recipe.getRating(),
+                recipe.getOwner(),
+                recipe.getLinksToImages(),
+                recipe.getIngredients(),
+                recipe.getCategories());
+    }
+
+    public static Recipe toEntity(RecipeDtoInOut dto) {
+        return new Recipe(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getProcedure(),
+                dto.getPrepareTime(),
+                dto.getNumberOfPortions(),
+                dto.getLinksToImages(),
+                dto.getIngredients(),
+                dto.getCategories(),
+                dto.getOwner());
     }
 }

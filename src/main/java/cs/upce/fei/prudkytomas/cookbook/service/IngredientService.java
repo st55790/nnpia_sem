@@ -3,6 +3,7 @@ package cs.upce.fei.prudkytomas.cookbook.service;
 import cs.upce.fei.prudkytomas.cookbook.domain.Ingredient;
 import cs.upce.fei.prudkytomas.cookbook.dto.CategoryDtoInOut;
 import cs.upce.fei.prudkytomas.cookbook.dto.IngredientDtoInOut;
+import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.repository.IngredientRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,21 +26,25 @@ public class IngredientService {
         return dtoList;
     }
 
-    public IngredientDtoInOut findById(Long id) {
-        return CoversionService.toDto(ingredientRepository.findById(id).orElse(null));
+    public IngredientDtoInOut findById(Long id) throws ResourceNotFoundException {
+        Ingredient ingredient = ingredientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Ingredient %s not found!", id)));
+        return CoversionService.toDto(ingredient);
     }
 
     public IngredientDtoInOut create(IngredientDtoInOut category) {
         return CoversionService.toDto(ingredientRepository.save(CoversionService.toEntity(category)));
     }
 
-    public IngredientDtoInOut update(Long id, IngredientDtoInOut dto) {
-        Ingredient ingredient = ingredientRepository.findById(id).orElse(null);
+    public IngredientDtoInOut update(Long id, IngredientDtoInOut dto) throws ResourceNotFoundException {
+        Ingredient ingredient = ingredientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Ingredient %s not found", id)));
         ingredient.setName(dto.getName());
         return CoversionService.toDto(ingredient);
     }
 
-    public void delete(Long id) {
-        ingredientRepository.delete(ingredientRepository.findById(id).orElse(null));
+    public void delete(Long id) throws ResourceNotFoundException {
+        ingredientRepository.delete(ingredientRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format("Ingredient %s not found!", id))));
     }
 }

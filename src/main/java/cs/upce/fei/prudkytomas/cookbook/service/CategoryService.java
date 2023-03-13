@@ -2,6 +2,7 @@ package cs.upce.fei.prudkytomas.cookbook.service;
 
 import cs.upce.fei.prudkytomas.cookbook.domain.Category;
 import cs.upce.fei.prudkytomas.cookbook.dto.CategoryDtoInOut;
+import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,8 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryDtoInOut findById(Long id){
-        return CoversionService.toDto(categoryRepository.findById(id).orElse(null));
+    public CategoryDtoInOut findById(Long id) throws ResourceNotFoundException {
+        return CoversionService.toDto(categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Category %s not found!", id))));
     }
 
     public List<CategoryDtoInOut> findAllCategories() {
@@ -33,13 +34,13 @@ public class CategoryService {
         return CoversionService.toDto(categoryRepository.save(CoversionService.toEntity(category)));
     }
 
-    public CategoryDtoInOut update(Long id, CategoryDtoInOut categoryDtoInOut) {
-        Category category = categoryRepository.findById(id).orElse(null);
+    public CategoryDtoInOut update(Long id, CategoryDtoInOut categoryDtoInOut) throws ResourceNotFoundException {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Category %s not found!", id)));
         category.setName(categoryDtoInOut.getName());
         return CoversionService.toDto(categoryRepository.save(category));
     }
 
-    public void delete(Long id) {
-        categoryRepository.delete(categoryRepository.findById(id).orElse(null));
+    public void delete(Long id) throws ResourceNotFoundException {
+        categoryRepository.delete(categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Category %s not found!", id))));
     }
 }
