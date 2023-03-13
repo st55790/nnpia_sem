@@ -1,33 +1,44 @@
 package cs.upce.fei.prudkytomas.cookbook.controller;
 
+import cs.upce.fei.prudkytomas.cookbook.dto.CategoryDtoInOut;
+import cs.upce.fei.prudkytomas.cookbook.service.CategoryService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@AllArgsConstructor
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
 
+    private final CategoryService categoryService;
+
     @GetMapping
-    public String getCategory(){
-        return "Get list of categories";
+    public ResponseEntity<List<CategoryDtoInOut>> getCategory(){
+        return ResponseEntity.ok(categoryService.findAllCategories());
     }
 
     @GetMapping("/{id}")
-    public String findCategoryById(@PathVariable Long id){
-        return "One category";
+    public ResponseEntity<CategoryDtoInOut> findCategoryById(@PathVariable Long id){
+        return ResponseEntity.ok(categoryService.findById(id));
     }
 
     @PostMapping
-    public String createCategory(){
-        return "Create category";
+    public ResponseEntity<CategoryDtoInOut> createCategory(@RequestBody @Validated CategoryDtoInOut category){
+        return ResponseEntity.ok(categoryService.create(category));
     }
 
-    @PutMapping
-    public String updateCategory(){
-        return "Update category";
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryDtoInOut> updateCategory(@RequestBody @Validated CategoryDtoInOut category, @PathVariable Long id){
+        return ResponseEntity.ok(categoryService.update(id, category));
     }
 
     @DeleteMapping("/{id}")
-    public String deleteCategory(@PathVariable Long id){
-        return "Delete category";
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id){
+        categoryService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }

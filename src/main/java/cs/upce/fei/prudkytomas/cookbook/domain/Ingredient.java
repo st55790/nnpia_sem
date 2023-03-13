@@ -35,4 +35,8 @@ public class Ingredient {
     )
     @JsonIgnore
     private List<Recipe> recipes = Collections.emptyList();
+
+    public Ingredient(String name) {
+        this.name = name;
+    }
 }

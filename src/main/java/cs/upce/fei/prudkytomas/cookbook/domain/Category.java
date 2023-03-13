@@ -34,4 +34,8 @@ public class Category {
     )
     @JsonIgnore
     private List<Recipe> recipes = Collections.emptyList();
+
+    public Category(String name) {
+        this.name = name;
+    }
 }

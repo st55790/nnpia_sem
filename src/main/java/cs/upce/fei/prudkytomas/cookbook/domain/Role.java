@@ -35,4 +35,8 @@ public class Role {
     @ToString.Exclude
     @JsonIgnore
     private List<AppUser> users = Collections.emptyList();
+
+    public Role(String name) {
+        this.name = name;
+    }
 }
