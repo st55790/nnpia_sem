@@ -33,13 +33,14 @@ public class AppUserController {
         return ResponseEntity.ok(appUserService.create(appUserDtoIn));
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/{id}")
     public ResponseEntity<AppUserDtoOut> updateAppUser(@RequestBody @Validated AppUserDtoIn appUserDtoIn, @PathVariable Long id){
         return ResponseEntity.ok(appUserService.update(id, appUserDtoIn));
     }
 
     @DeleteMapping("/{id}")
-    public String deleteAppUser(@PathVariable Long id){
-        return "Delete Appuser";
+    public ResponseEntity<?> deleteAppUser(@PathVariable Long id){
+        appUserService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }

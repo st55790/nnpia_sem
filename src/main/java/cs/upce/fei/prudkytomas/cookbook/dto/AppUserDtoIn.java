@@ -14,8 +14,6 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class AppUserDtoIn {
 
-    private Long id;
-
     @NotBlank
     @Size(min = 5, max = 32, message = "Username must be between 5 and 32 characters long")
     @Column

@@ -47,4 +47,8 @@ public class AppUserService {
         appUser.setEmail(appUserDtoIn.getEmail());
         return CoversionService.toDto(appUserRepository.save(appUser));
     }
+
+    public void delete(Long id){
+        appUserRepository.delete(appUserRepository.findById(id).orElse(null));
+    }
 }
