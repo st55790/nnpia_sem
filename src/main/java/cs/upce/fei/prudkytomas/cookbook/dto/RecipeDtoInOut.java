@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotBlank;
 import java.util.Collections;
 import java.util.List;
@@ -39,4 +37,20 @@ public class RecipeDtoInOut {
     private List<Ingredient> ingredients = Collections.emptyList();
 
     private List<Category> categories = Collections.emptyList();
+
+    @Override
+    public String toString() {
+        return "RecipeDtoInOut{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", procedure='" + procedure + '\'' +
+                ", prepareTime=" + prepareTime +
+                ", numberOfPortions=" + numberOfPortions +
+                ", rating=" + rating +
+                ", owner=" + owner +
+                ", linksToImages=" + linksToImages +
+                ", ingredients=" + ingredients +
+                ", categories=" + categories +
+                '}';
+    }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -60,7 +61,7 @@ public class Recipe {
     @JsonIgnore
     private List<AppUser> users = Collections.emptyList();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private AppUser owner;
 
     public Recipe(String name, String description, String procedure, Integer prepareTime, Integer numberOfPortions, List<String> linksToImages, List<Ingredient> ingredients, List<Category> categories, AppUser owner) {
