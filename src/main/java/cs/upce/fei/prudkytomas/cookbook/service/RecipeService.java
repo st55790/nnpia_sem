@@ -1,14 +1,18 @@
 package cs.upce.fei.prudkytomas.cookbook.service;
 
+import cs.upce.fei.prudkytomas.cookbook.domain.AppUser;
+import cs.upce.fei.prudkytomas.cookbook.domain.Category;
+import cs.upce.fei.prudkytomas.cookbook.domain.Ingredient;
 import cs.upce.fei.prudkytomas.cookbook.domain.Recipe;
 import cs.upce.fei.prudkytomas.cookbook.dto.RecipeDtoInOut;
 import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
+import cs.upce.fei.prudkytomas.cookbook.repository.AppUserRepository;
+import cs.upce.fei.prudkytomas.cookbook.repository.CategoryRepository;
+import cs.upce.fei.prudkytomas.cookbook.repository.IngredientRepository;
 import cs.upce.fei.prudkytomas.cookbook.repository.RecipeRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +22,10 @@ import java.util.List;
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final AppUserRepository appUserRepository;
+    private final IngredientRepository ingredientRepository;
+
+    private final CategoryRepository categoryRepository;
 
     public List<RecipeDtoInOut> findAllRecipes() {
         List<Recipe> list = (List<Recipe>) recipeRepository.findAll();
@@ -37,12 +45,48 @@ public class RecipeService {
     }
 
     @Transactional
-    public RecipeDtoInOut create(RecipeDtoInOut recipeDtoInOut) {
-        Recipe recipe = CoversionService.toEntity(recipeDtoInOut);
-        recipeRepository.save(recipe);
-        System.out.println(recipeDtoInOut.toString());
-        //return null;
-        return CoversionService.toDto(recipe);
+    public RecipeDtoInOut create(RecipeDtoInOut recipeDtoInOut) throws ResourceNotFoundException {
+        AppUser user = appUserRepository.findById(1L).orElseThrow(()-> new ResourceNotFoundException(String.format("User %s not found", 1L)));
+
+        //AppUser appUser = recipeDtoInOut.getOwner(); Toto se pak bude nastavovat, až ho tam pošlu z frontendu asi
+
+        List<Category> categories = recipeDtoInOut.getCategories();
+        List<Ingredient> ingredients = recipeDtoInOut.getIngredients();
+        List<String> links = recipeDtoInOut.getLinksToImages();
+
+        Recipe recipe = new Recipe(null,
+                recipeDtoInOut.getName(),
+                recipeDtoInOut.getDescription(),
+                recipeDtoInOut.getProcedure(),
+                recipeDtoInOut.getPrepareTime(),
+                recipeDtoInOut.getNumberOfPortions(),
+                0, links, ingredients, categories, null, user);
+
+        Recipe saveRecipe = recipeRepository.save(recipe);
+        System.out.println(categories);
+
+        addRecipeIngredients(saveRecipe, recipe.getIngredients());
+        addRecipeCategories(saveRecipe, recipe.getCategories());
+
+        return CoversionService.toDto(saveRecipe);
+    }
+
+    private void addRecipeCategories(Recipe recipe, List<Category> categories) throws ResourceNotFoundException {
+        for (Category item : categories){
+            Category category = categoryRepository.findById(item.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException(String.format("Category %s not found", item.getId())));
+            category.getRecipes().add(recipe);
+            categoryRepository.save(category);
+        }
+    }
+
+    private void addRecipeIngredients(Recipe recipe, List<Ingredient> ingredients) throws ResourceNotFoundException {
+        for (Ingredient item : ingredients) {
+            Ingredient ingredient = ingredientRepository.findById(item.getId())
+                    .orElseThrow(()-> new ResourceNotFoundException(String.format("Ingredient %s not found", item.getId())));
+            ingredient.getRecipes().add(recipe);
+            ingredientRepository.save(ingredient);
+        }
     }
 
     public RecipeDtoInOut update(Long id, RecipeDtoInOut dto) throws ResourceNotFoundException {

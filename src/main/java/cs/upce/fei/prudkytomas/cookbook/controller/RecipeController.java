@@ -30,7 +30,7 @@ public class RecipeController {
     }
 
     @PostMapping
-    public ResponseEntity<RecipeDtoInOut> createRecipe(@RequestBody @Validated RecipeDtoInOut recipeDtoInOut){
+    public ResponseEntity<RecipeDtoInOut> createRecipe(@RequestBody @Validated RecipeDtoInOut recipeDtoInOut) throws ResourceNotFoundException {
         return ResponseEntity.ok(recipeService.create(recipeDtoInOut));
     }
 

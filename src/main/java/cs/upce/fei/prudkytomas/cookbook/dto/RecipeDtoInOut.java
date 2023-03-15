@@ -1,5 +1,6 @@
 package cs.upce.fei.prudkytomas.cookbook.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import cs.upce.fei.prudkytomas.cookbook.domain.AppUser;
 import cs.upce.fei.prudkytomas.cookbook.domain.Category;
 import cs.upce.fei.prudkytomas.cookbook.domain.Ingredient;
@@ -30,6 +31,7 @@ public class RecipeDtoInOut {
 
     private double rating;
 
+    @JsonIgnore
     private AppUser owner;
 
     private List<String> linksToImages = Collections.emptyList();

@@ -1,18 +1,17 @@
 package cs.upce.fei.prudkytomas.cookbook.service;
 
 import cs.upce.fei.prudkytomas.cookbook.domain.AppUser;
+import cs.upce.fei.prudkytomas.cookbook.domain.Recipe;
 import cs.upce.fei.prudkytomas.cookbook.dto.AppUserDtoIn;
 import cs.upce.fei.prudkytomas.cookbook.dto.AppUserDtoOut;
 import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.repository.AppUserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
