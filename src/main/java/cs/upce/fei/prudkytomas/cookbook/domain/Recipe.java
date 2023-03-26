@@ -16,10 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Recipe {
+
     @Id
-    @SequenceGenerator(name = "recipe_id_seq", sequenceName = "recipe_id_seq", allocationSize = 50)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "recipe_id_seq")
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank

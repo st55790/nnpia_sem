@@ -18,9 +18,7 @@ import java.util.List;
 public class Ingredient {
 
     @Id
-    @SequenceGenerator(name = "ingredient_id_seq", sequenceName = "ingredient_id_seq", allocationSize = 50)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ingredient_id_seq")
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank

@@ -48,7 +48,7 @@ public class RecipeService {
     public RecipeDtoInOut create(RecipeDtoInOut recipeDtoInOut) throws ResourceNotFoundException {
         AppUser user = appUserRepository.findById(1L).orElseThrow(()-> new ResourceNotFoundException(String.format("User %s not found", 1L)));
 
-        //AppUser appUser = recipeDtoInOut.getOwner(); Toto se pak bude nastavovat, až ho tam pošlu z frontendu asi
+        //AppUser appUser = recipeDtoInOut.getOwner(); //Toto se pak bude nastavovat, až ho tam pošlu z frontendu asi
 
         List<Category> categories = recipeDtoInOut.getCategories();
         List<Ingredient> ingredients = recipeDtoInOut.getIngredients();
@@ -60,7 +60,8 @@ public class RecipeService {
                 recipeDtoInOut.getProcedure(),
                 recipeDtoInOut.getPrepareTime(),
                 recipeDtoInOut.getNumberOfPortions(),
-                0, links, ingredients, categories, null, user);
+                recipeDtoInOut.getRating(),
+                links, ingredients, categories, null, user);
 
         Recipe saveRecipe = recipeRepository.save(recipe);
         System.out.println(categories);

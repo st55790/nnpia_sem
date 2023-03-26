@@ -7,11 +7,13 @@ import cs.upce.fei.prudkytomas.cookbook.service.CategoryService;
 import cs.upce.fei.prudkytomas.cookbook.service.IngredientService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @AllArgsConstructor
 @RestController
 @RequestMapping("/ingredient")
@@ -30,16 +32,19 @@ public class IngredientController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<IngredientDtoInOut> createIngredient(@RequestBody @Validated IngredientDtoInOut ingredient){
         return ResponseEntity.ok(ingredientService.create(ingredient));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<IngredientDtoInOut> updateIngredient(@RequestBody @Validated IngredientDtoInOut ingredient, @PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(ingredientService.update(id, ingredient));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> deleteIngredient(@PathVariable Long id) throws ResourceNotFoundException {
         ingredientService.delete(id);
         return ResponseEntity.ok().build();

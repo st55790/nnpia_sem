@@ -11,7 +11,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -19,9 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 public class AppUser {
     @Id
-    @SequenceGenerator(name = "app_users_id_seq", sequenceName = "app_users_id_seq", allocationSize = 50, initialValue = 1000)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_user_id_seq")
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
@@ -46,8 +46,11 @@ public class AppUser {
     @ManyToMany(mappedBy = "users")
     private List<Recipe> favoriteRecipes = Collections.emptyList();
 
-    @ManyToMany(mappedBy = "users")
-    private List<Role> roles = Collections.emptyList();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     public AppUser(String username, String password, String email) {
         this.username = username;

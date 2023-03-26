@@ -16,27 +16,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
+
     @Id
-    @SequenceGenerator(name = "role_id_seq", sequenceName = "role_id_seq", allocationSize = 1, initialValue = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_seq")
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Column
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private ERole name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "app_user_role",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "app_user_id")
-    )
-    @ToString.Exclude
-    @JsonIgnore
-    private List<AppUser> users = Collections.emptyList();
-
-    public Role(String name) {
-        this.name = name;
-    }
 }

@@ -7,11 +7,13 @@ import cs.upce.fei.prudkytomas.cookbook.service.IngredientService;
 import cs.upce.fei.prudkytomas.cookbook.service.RoleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @AllArgsConstructor
 @RestController
 @RequestMapping("/role")
@@ -30,16 +32,19 @@ public class RoleController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<RoleDtoInOut> createRole(@RequestBody @Validated RoleDtoInOut dto){
         return ResponseEntity.ok(roleService.create(dto));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<RoleDtoInOut> updateRole(@RequestBody @Validated RoleDtoInOut dto, @PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(roleService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> deleteRole(@PathVariable Long id) throws ResourceNotFoundException {
         roleService.delete(id);
         return ResponseEntity.ok().build();

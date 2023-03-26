@@ -6,12 +6,14 @@ import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.service.RecipeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @AllArgsConstructor
 @RestController
 @RequestMapping("/recipe")
@@ -30,16 +32,19 @@ public class RecipeController {
     }
 
     @PostMapping
-    public ResponseEntity<RecipeDtoInOut> createRecipe(@RequestBody @Validated RecipeDtoInOut recipeDtoInOut) throws ResourceNotFoundException {
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<RecipeDtoInOut> createRecipe(@RequestBody RecipeDtoInOut recipeDtoInOut) throws ResourceNotFoundException {
         return ResponseEntity.ok(recipeService.create(recipeDtoInOut));
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<RecipeDtoInOut> updateRecipe(@RequestBody @Validated RecipeDtoInOut recipe, @PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(recipeService.update(id, recipe));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> deleteRecipe(@PathVariable Long id) throws ResourceNotFoundException {
         recipeService.delete(id);
         return ResponseEntity.ok().build();

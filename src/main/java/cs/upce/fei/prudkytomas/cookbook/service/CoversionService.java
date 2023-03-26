@@ -30,11 +30,13 @@ public class CoversionService {
     }
 
     public static RoleDtoInOut toDto(Role role) {
-        return new RoleDtoInOut(role.getName());
+        //return new RoleDtoInOut(role.getName());
+        return null;
     }
 
     public static Role toEntity(RoleDtoInOut dto){
-        return new Role(dto.getName());
+        //return new Role(dto.getName());
+        return null;
     }
 
     public static RecipeDtoInOut toDto(Recipe recipe) {

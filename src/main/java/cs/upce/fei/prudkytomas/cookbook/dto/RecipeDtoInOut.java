@@ -17,12 +17,10 @@ import java.util.List;
 @AllArgsConstructor
 public class RecipeDtoInOut {
 
-    @NotBlank
     private String name;
 
     private String description;
 
-    @NotBlank
     private String procedure;
 
     private Integer prepareTime;

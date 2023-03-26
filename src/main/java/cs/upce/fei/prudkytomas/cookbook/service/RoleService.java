@@ -45,7 +45,7 @@ public class RoleService {
     public RoleDtoInOut update(Long id, RoleDtoInOut dto) throws ResourceNotFoundException {
         Role role = roleRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException(String.format("Role %s not found!", id)));
-        role.setName(dto.getName());
+        //role.setName(dto.getName());
         return CoversionService.toDto(roleRepository.save(role));
     }
 }
