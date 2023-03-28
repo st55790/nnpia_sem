@@ -29,8 +29,7 @@ public class RecipeDtoInOut {
 
     private double rating;
 
-    @JsonIgnore
-    private AppUser owner;
+    private Long owner;
 
     private List<String> linksToImages = Collections.emptyList();
 

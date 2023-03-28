@@ -2,8 +2,13 @@ package cs.upce.fei.prudkytomas.cookbook.service;
 
 import cs.upce.fei.prudkytomas.cookbook.domain.*;
 import cs.upce.fei.prudkytomas.cookbook.dto.*;
+import cs.upce.fei.prudkytomas.cookbook.repository.AppUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CoversionService {
+
+    @Autowired
+    private static AppUserRepository appUserRepository;
 
     public static AppUserDtoOut toDto(AppUser appUser){
         return new AppUserDtoOut(appUser.getUsername(), appUser.getEmail());
@@ -47,7 +52,7 @@ public class CoversionService {
                 recipe.getPrepareTime(),
                 recipe.getNumberOfPortions(),
                 recipe.getRating(),
-                recipe.getOwner(),
+                recipe.getOwner().getId(),
                 recipe.getLinksToImages(),
                 recipe.getIngredients(),
                 recipe.getCategories());
@@ -63,6 +68,6 @@ public class CoversionService {
                 dto.getLinksToImages(),
                 dto.getIngredients(),
                 dto.getCategories(),
-                dto.getOwner());
+                appUserRepository.findById(dto.getOwner()).orElse(null));
     }
 }

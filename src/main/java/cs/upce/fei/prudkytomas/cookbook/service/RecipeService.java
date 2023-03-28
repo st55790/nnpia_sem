@@ -46,9 +46,7 @@ public class RecipeService {
 
     @Transactional
     public RecipeDtoInOut create(RecipeDtoInOut recipeDtoInOut) throws ResourceNotFoundException {
-        AppUser user = appUserRepository.findById(1L).orElseThrow(()-> new ResourceNotFoundException(String.format("User %s not found", 1L)));
-
-        //AppUser appUser = recipeDtoInOut.getOwner(); //Toto se pak bude nastavovat, až ho tam pošlu z frontendu asi
+        AppUser user = appUserRepository.findById(recipeDtoInOut.getOwner()).orElseThrow(()-> new ResourceNotFoundException(String.format("User %s not found", 1L)));
 
         List<Category> categories = recipeDtoInOut.getCategories();
         List<Ingredient> ingredients = recipeDtoInOut.getIngredients();
@@ -74,8 +72,7 @@ public class RecipeService {
 
     private void addRecipeCategories(Recipe recipe, List<Category> categories) throws ResourceNotFoundException {
         for (Category item : categories){
-            Category category = categoryRepository.findById(item.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException(String.format("Category %s not found", item.getId())));
+            Category category = categoryRepository.findByName(item.getName());
             category.getRecipes().add(recipe);
             categoryRepository.save(category);
         }
@@ -83,8 +80,7 @@ public class RecipeService {
 
     private void addRecipeIngredients(Recipe recipe, List<Ingredient> ingredients) throws ResourceNotFoundException {
         for (Ingredient item : ingredients) {
-            Ingredient ingredient = ingredientRepository.findById(item.getId())
-                    .orElseThrow(()-> new ResourceNotFoundException(String.format("Ingredient %s not found", item.getId())));
+            Ingredient ingredient = ingredientRepository.findByName(item.getName());
             ingredient.getRecipes().add(recipe);
             ingredientRepository.save(ingredient);
         }
@@ -93,13 +89,14 @@ public class RecipeService {
     public RecipeDtoInOut update(Long id, RecipeDtoInOut dto) throws ResourceNotFoundException {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Recipe %s not found", id)));
+        AppUser user = appUserRepository.findById(dto.getOwner()).orElseThrow(()-> new ResourceNotFoundException(String.format("User %s not found", 1L)));
 
         recipe.setName(dto.getName());
         recipe.setDescription(dto.getDescription());
         recipe.setProcedure(dto.getProcedure());
         recipe.setNumberOfPortions(dto.getNumberOfPortions());
         recipe.setRating(dto.getRating());
-        recipe.setOwner(dto.getOwner());
+        recipe.setOwner(user);
         recipe.setLinksToImages(dto.getLinksToImages());
         recipe.setIngredients(dto.getIngredients());
         recipe.setCategories(dto.getCategories());
