@@ -63,7 +63,8 @@ public class Recipe {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private AppUser owner;
 
-    public Recipe(String name, String description, String procedure, Integer prepareTime, Integer numberOfPortions, List<String> linksToImages, List<Ingredient> ingredients, List<Category> categories, AppUser owner) {
+    public Recipe(Long id, String name, String description, String procedure, Integer prepareTime, Integer numberOfPortions, List<String> linksToImages, List<Ingredient> ingredients, List<Category> categories, AppUser owner) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.procedure = procedure;

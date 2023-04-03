@@ -19,7 +19,7 @@ public class CoversionService {
     }
 
     public static CategoryDtoInOut toDto(Category category) {
-        return new CategoryDtoInOut(category.getName());
+        return new CategoryDtoInOut(category.getId(), category.getName());
     }
 
     public static Category toEntity(CategoryDtoInOut dto){
@@ -27,7 +27,7 @@ public class CoversionService {
     }
 
     public static IngredientDtoInOut toDto(Ingredient ingredient) {
-        return new IngredientDtoInOut(ingredient.getName());
+        return new IngredientDtoInOut(ingredient.getId(), ingredient.getName());
     }
 
     public static Ingredient toEntity(IngredientDtoInOut dto){
@@ -46,6 +46,7 @@ public class CoversionService {
 
     public static RecipeDtoInOut toDto(Recipe recipe) {
         return new RecipeDtoInOut(
+                recipe.getId(),
                 recipe.getName(),
                 recipe.getDescription(),
                 recipe.getProcedure(),
@@ -60,6 +61,7 @@ public class CoversionService {
 
     public static Recipe toEntity(RecipeDtoInOut dto) {
         return new Recipe(
+                dto.getId(),
                 dto.getName(),
                 dto.getDescription(),
                 dto.getProcedure(),

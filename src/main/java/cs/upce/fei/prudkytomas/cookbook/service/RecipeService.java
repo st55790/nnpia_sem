@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -105,13 +106,44 @@ public class RecipeService {
         return CoversionService.toDto(recipe);
     }
 
+    @Transactional
     public void delete(Long id) throws ResourceNotFoundException {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Recipe %s not found", id)));
+
+        // Provizorní řešení, aby šel odstranit Recipe.
+        // Když použiji cascade, tak mi to smaže i AppUser a všechny jeho potomky
+
+        recipeRepository.removeRecipeCategories(id);
+        recipeRepository.removeRecipeIngredients(id);
+        recipe.setOwner(null);
+
+        recipeRepository.save(recipe);
+
         recipeRepository.delete(recipe);
     }
 
     public void create(Recipe recipe) {
         recipeRepository.save(recipe);
+    }
+
+    public List<RecipeDtoInOut> findRecipesByOwner(Long id) {
+        List<RecipeDtoInOut> listDto = recipeRepository.findAllByOwner(appUserRepository.findById(id).orElse(null))
+                .stream()
+                .map(CoversionService::toDto)
+                .collect(Collectors.toList());
+
+        return listDto;
+    }
+
+    public List<RecipeDtoInOut> findFavoriteRecipes(Long id) {
+        AppUser appUser = appUserRepository.findById(id).orElse(null);
+        List<RecipeDtoInOut> listDto = appUser.getFavoriteRecipes().stream().map(CoversionService::toDto).collect(Collectors.toList());
+        //System.out.println(appUser.getFavoriteRecipes());
+        return listDto;
+    }
+
+    public void deleteFavorite(Long recipeId, Long userId) {
+        recipeRepository.removeFavorites(recipeId, userId);
     }
 }

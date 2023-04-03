@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RecipeDtoInOut {
 
+    private Long id;
     private String name;
 
     private String description;

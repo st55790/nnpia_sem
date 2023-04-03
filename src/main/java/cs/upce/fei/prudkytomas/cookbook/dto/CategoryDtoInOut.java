@@ -12,6 +12,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class CategoryDtoInOut {
 
+    private Long id;
+
     @NotBlank
     private String name;
 }

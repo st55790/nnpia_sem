@@ -43,10 +43,17 @@ public class IngredientController {
         return ResponseEntity.ok(ingredientService.update(id, ingredient));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping()
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<?> deleteIngredient(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<?> deleteIngredient(@RequestParam(value = "id") Long id) throws ResourceNotFoundException {
         ingredientService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{name}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> deleteIngredient(@PathVariable String name) throws ResourceNotFoundException {
+        ingredientService.delete(name);
         return ResponseEntity.ok().build();
     }
 }

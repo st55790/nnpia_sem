@@ -39,7 +39,7 @@ public class AppUser {
     @Column
     private String email;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Recipe> userRecipes = Collections.emptyList();
 

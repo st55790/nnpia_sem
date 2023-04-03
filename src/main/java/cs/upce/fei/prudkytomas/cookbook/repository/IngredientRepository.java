@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IngredientRepository extends PagingAndSortingRepository<Ingredient, Long> {
     Ingredient findByName(String name);
+
+    void deleteByNameEquals(String name);
 }

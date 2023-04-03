@@ -31,6 +31,18 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.findById(id));
     }
 
+    @GetMapping("/owner/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<List<RecipeDtoInOut>> findUserRecipes(@PathVariable Long id) throws  ResourceNotFoundException {
+        return ResponseEntity.ok(recipeService.findRecipesByOwner(id));
+    }
+
+    @GetMapping("/favorite/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<List<RecipeDtoInOut>> findUserFavorites(@PathVariable Long id) throws ResourceNotFoundException {
+        return ResponseEntity.ok(recipeService.findFavoriteRecipes(id));
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<RecipeDtoInOut> createRecipe(@RequestBody RecipeDtoInOut recipeDtoInOut) throws ResourceNotFoundException {
@@ -49,4 +61,12 @@ public class RecipeController {
         recipeService.delete(id);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{recipeId}/{userId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> deleteFavorite(@PathVariable Long recipeId, @PathVariable Long userId) throws ResourceNotFoundException {
+        recipeService.deleteFavorite(recipeId, userId);
+        return ResponseEntity.ok().build();
+    }
+
 }

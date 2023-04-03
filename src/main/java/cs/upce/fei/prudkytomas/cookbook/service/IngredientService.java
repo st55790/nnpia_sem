@@ -47,4 +47,8 @@ public class IngredientService {
         ingredientRepository.delete(ingredientRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException(String.format("Ingredient %s not found!", id))));
     }
+
+    public void delete(String name) {
+        ingredientRepository.deleteByNameEquals(name);
+    }
 }
