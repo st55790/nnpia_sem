@@ -30,4 +30,10 @@ public interface RecipeRepository extends PagingAndSortingRepository<Recipe, Lon
     @Transactional
     @Query(value = "DELETE FROM app_user_recipe f WHERE f.recipe_id=:recipeId AND f.app_user_id=:userId", nativeQuery = true)
     void removeFavorites(@Param("recipeId") Long recipeId, @Param("userId") Long userId);
+
+    @Transactional
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM app_user_recipe f WHERE f.recipe_id=:recipeId AND f.app_user_id=:userId)", nativeQuery = true)
+    boolean isUserFavorite(@Param("recipeId") Long recipeId, @Param("userId") Long userId);
+
+    List<Recipe> findAllByNameContains(String name);
 }

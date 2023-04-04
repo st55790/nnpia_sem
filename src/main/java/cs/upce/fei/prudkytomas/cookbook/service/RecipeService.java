@@ -146,4 +146,17 @@ public class RecipeService {
     public void deleteFavorite(Long recipeId, Long userId) {
         recipeRepository.removeFavorites(recipeId, userId);
     }
+
+    public boolean isUserFavorite(Long recipeId, Long userId) {
+        return recipeRepository.isUserFavorite(recipeId, userId);
+    }
+
+    public List<RecipeDtoInOut> recipeContainsString(String name) {
+        List<RecipeDtoInOut> listDto = recipeRepository.findAllByNameContains(name)
+                .stream()
+                .map(CoversionService::toDto)
+                .collect(Collectors.toList());
+        System.out.println("SIZE ---->>> " + listDto.size());
+        return listDto;
+    }
 }

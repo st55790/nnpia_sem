@@ -1,5 +1,6 @@
 package cs.upce.fei.prudkytomas.cookbook.service;
 
+import cs.upce.fei.prudkytomas.cookbook.domain.ERole;
 import cs.upce.fei.prudkytomas.cookbook.domain.Role;
 import cs.upce.fei.prudkytomas.cookbook.dto.IngredientDtoInOut;
 import cs.upce.fei.prudkytomas.cookbook.dto.RoleDtoInOut;
@@ -45,7 +46,8 @@ public class RoleService {
     public RoleDtoInOut update(Long id, RoleDtoInOut dto) throws ResourceNotFoundException {
         Role role = roleRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException(String.format("Role %s not found!", id)));
-        //role.setName(dto.getName());
+        role.setName(ERole.valueOf(dto.getName()));
+        roleRepository.save(role);
         return CoversionService.toDto(roleRepository.save(role));
     }
 }

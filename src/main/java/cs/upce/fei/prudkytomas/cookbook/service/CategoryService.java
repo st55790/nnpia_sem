@@ -37,6 +37,7 @@ public class CategoryService {
     public CategoryDtoInOut update(Long id, CategoryDtoInOut categoryDtoInOut) throws ResourceNotFoundException {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Category %s not found!", id)));
         category.setName(categoryDtoInOut.getName());
+        categoryRepository.save(category);
         return CoversionService.toDto(categoryRepository.save(category));
     }
 

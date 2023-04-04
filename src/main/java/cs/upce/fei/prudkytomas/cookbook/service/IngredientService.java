@@ -40,6 +40,7 @@ public class IngredientService {
         Ingredient ingredient = ingredientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Ingredient %s not found", id)));
         ingredient.setName(dto.getName());
+        ingredientRepository.save(ingredient);
         return CoversionService.toDto(ingredient);
     }
 

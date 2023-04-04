@@ -52,6 +52,7 @@ public class AppUserService {
         appUser.setUsername(appUserDtoIn.getUsername());
         appUser.setPassword(appUserDtoIn.getPassword());
         appUser.setEmail(appUserDtoIn.getEmail());
+        appUserRepository.save(appUser);
         return CoversionService.toDto(appUserRepository.save(appUser));
     }
 

@@ -69,4 +69,15 @@ public class RecipeController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{recipeId}/{userId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> isRecipeFavorite(@PathVariable Long recipeId, @PathVariable Long userId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(recipeService.isUserFavorite(recipeId, userId));
+    }
+
+    @GetMapping("/filtered")
+    public ResponseEntity<List<RecipeDtoInOut>> recipeContainsString(@RequestParam("name") String name) throws ResourceNotFoundException{
+        return ResponseEntity.ok(recipeService.recipeContainsString(name));
+    }
+
 }
