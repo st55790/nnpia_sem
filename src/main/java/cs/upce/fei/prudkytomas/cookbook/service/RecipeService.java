@@ -11,10 +11,15 @@ import cs.upce.fei.prudkytomas.cookbook.repository.CategoryRepository;
 import cs.upce.fei.prudkytomas.cookbook.repository.IngredientRepository;
 import cs.upce.fei.prudkytomas.cookbook.repository.RecipeRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -156,7 +161,60 @@ public class RecipeService {
                 .stream()
                 .map(CoversionService::toDto)
                 .collect(Collectors.toList());
-        System.out.println("SIZE ---->>> " + listDto.size());
+
         return listDto;
+    }
+
+    public Integer getCountOfRecipes() {
+        return recipeRepository.getCountOfRecipes();
+    }
+
+    public Integer getCountOfRecipesWithName(String name) {
+        return recipeRepository.getCountOfRecipesWithName(name);
+    }
+
+    public List<RecipeDtoInOut> findAllByPage(Integer page, Integer items, String sort){
+        Sort sortObject = getSort(sort);
+        List<RecipeDtoInOut> allRecipes = recipeRepository.findAll(PageRequest.of(page, items, sortObject))
+                .stream()
+                .map(CoversionService::toDto)
+                .collect(Collectors.toList());
+
+        return allRecipes;
+    }
+
+    public List<RecipeDtoInOut> findAllByNameLike(Integer page, Integer items, String name, String sort){
+        Sort sortObject = getSort(sort);
+
+        List<RecipeDtoInOut> allRecipes = recipeRepository.findByNameContaining(PageRequest.of(page, items, sortObject), name)
+                .stream()
+                .map(CoversionService::toDto)
+                .collect(Collectors.toList());
+
+        return allRecipes;
+    }
+
+    public void addToFavorite(Long recipeId, Long userId) {
+        recipeRepository.addToFavorite(recipeId, userId);
+    }
+
+    public Sort getSort(String sort) {
+        Sort s;
+        switch (sort) {
+            case "name_asc":
+                s = Sort.by("name").ascending();
+                break;
+            case "name_dsc":
+                s = Sort.by("name").descending();
+                break;
+            case "rating_asc":
+                s = Sort.by("rating").ascending();
+                break;
+            case "rating_dsc":
+            default:
+                s = Sort.by("rating").descending();
+                break;
+        }
+        return s;
     }
 }

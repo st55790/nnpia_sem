@@ -2,6 +2,8 @@ package cs.upce.fei.prudkytomas.cookbook.repository;
 
 import cs.upce.fei.prudkytomas.cookbook.domain.AppUser;
 import cs.upce.fei.prudkytomas.cookbook.domain.Recipe;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -36,4 +38,20 @@ public interface RecipeRepository extends PagingAndSortingRepository<Recipe, Lon
     boolean isUserFavorite(@Param("recipeId") Long recipeId, @Param("userId") Long userId);
 
     List<Recipe> findAllByNameContains(String name);
+
+    @Query(value = "SELECT COUNT(*) FROM recipe", nativeQuery = true)
+    Integer getCountOfRecipes();
+
+    @Query(value = "SELECT COUNT(*) FROM recipe r WHERE r.name LIKE %:name%", nativeQuery = true)
+    Integer getCountOfRecipesWithName(@Param("name") String name);
+
+    Page<Recipe> findAll(Pageable pageable);
+
+    Page<Recipe> findByNameContaining(Pageable pageable, String name);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO app_user_recipe (recipe_id, app_user_id) VALUES (:recipeId, :userId)", nativeQuery = true)
+    void addToFavorite(Long recipeId, Long userId);
+
 }

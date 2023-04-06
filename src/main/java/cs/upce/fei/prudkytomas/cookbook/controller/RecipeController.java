@@ -21,7 +21,7 @@ public class RecipeController {
 
     private final RecipeService recipeService;
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<RecipeDtoInOut>> getRecipes(){
         return ResponseEntity.ok(recipeService.findAllRecipes());
     }
@@ -75,9 +75,33 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.isUserFavorite(recipeId, userId));
     }
 
-    @GetMapping("/filtered")
-    public ResponseEntity<List<RecipeDtoInOut>> recipeContainsString(@RequestParam("name") String name) throws ResourceNotFoundException{
-        return ResponseEntity.ok(recipeService.recipeContainsString(name));
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCountOfRecipes() {
+        return ResponseEntity.ok(recipeService.getCountOfRecipes());
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<RecipeDtoInOut>> getPageRecipes(@RequestParam Integer page, @RequestParam Integer items,
+                                                               @RequestParam String sort){
+        return ResponseEntity.ok(recipeService.findAllByPage(page, items, sort));
+    }
+
+    @GetMapping("/str")
+    public ResponseEntity<List<RecipeDtoInOut>> findAllByNameLike(@RequestParam String name, @RequestParam Integer page,
+                                                                  @RequestParam Integer items, @RequestParam String sort){
+        return ResponseEntity.ok(recipeService.findAllByNameLike(page, items, name, sort));
+    }
+
+    @GetMapping("/count/str")
+    public ResponseEntity<Integer> getCountOfRecipesWithName(@RequestParam String name) {
+        return ResponseEntity.ok(recipeService.getCountOfRecipesWithName(name));
+    }
+
+    @PostMapping("/{recipeId}/{userId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> addToFavorite(@PathVariable Long recipeId, @PathVariable Long userId) throws ResourceNotFoundException {
+        recipeService.addToFavorite(recipeId, userId);
+        return ResponseEntity.ok().build();
     }
 
 }
