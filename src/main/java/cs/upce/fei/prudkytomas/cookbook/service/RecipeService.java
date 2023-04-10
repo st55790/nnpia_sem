@@ -11,15 +11,12 @@ import cs.upce.fei.prudkytomas.cookbook.repository.CategoryRepository;
 import cs.upce.fei.prudkytomas.cookbook.repository.IngredientRepository;
 import cs.upce.fei.prudkytomas.cookbook.repository.RecipeRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +49,7 @@ public class RecipeService {
 
     @Transactional
     public RecipeDtoInOut create(RecipeDtoInOut recipeDtoInOut) throws ResourceNotFoundException {
-        AppUser user = appUserRepository.findById(recipeDtoInOut.getOwner()).orElseThrow(()-> new ResourceNotFoundException(String.format("User %s not found", 1L)));
+        AppUser user = appUserRepository.findById(recipeDtoInOut.getOwner()).orElseThrow(()-> new ResourceNotFoundException(String.format("User %s not found", recipeDtoInOut.getOwner())));
 
         List<Category> categories = recipeDtoInOut.getCategories();
         List<Ingredient> ingredients = recipeDtoInOut.getIngredients();
@@ -76,7 +73,7 @@ public class RecipeService {
         return CoversionService.toDto(saveRecipe);
     }
 
-    private void addRecipeCategories(Recipe recipe, List<Category> categories) throws ResourceNotFoundException {
+    private void addRecipeCategories(Recipe recipe, List<Category> categories) {
         for (Category item : categories){
             Category category = categoryRepository.findByName(item.getName());
             category.getRecipes().add(recipe);
@@ -84,7 +81,7 @@ public class RecipeService {
         }
     }
 
-    private void addRecipeIngredients(Recipe recipe, List<Ingredient> ingredients) throws ResourceNotFoundException {
+    private void addRecipeIngredients(Recipe recipe, List<Ingredient> ingredients) {
         for (Ingredient item : ingredients) {
             Ingredient ingredient = ingredientRepository.findByName(item.getName());
             ingredient.getRecipes().add(recipe);
@@ -93,38 +90,41 @@ public class RecipeService {
     }
 
     public RecipeDtoInOut update(Long id, RecipeDtoInOut dto) throws ResourceNotFoundException {
-        Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Recipe %s not found", id)));
-        AppUser user = appUserRepository.findById(dto.getOwner()).orElseThrow(()-> new ResourceNotFoundException(String.format("User %s not found", 1L)));
+        if(!dto.getOwner().equals(id)) throw new ResourceNotFoundException("User isnt owner!");
 
+        Recipe recipe = recipeRepository.findById(dto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Recipe %s not found", id)));
+
+        recipe.setId(dto.getId());
         recipe.setName(dto.getName());
         recipe.setDescription(dto.getDescription());
         recipe.setProcedure(dto.getProcedure());
         recipe.setNumberOfPortions(dto.getNumberOfPortions());
         recipe.setRating(dto.getRating());
-        recipe.setOwner(user);
         recipe.setLinksToImages(dto.getLinksToImages());
         recipe.setIngredients(dto.getIngredients());
         recipe.setCategories(dto.getCategories());
+        recipe.setPrepareTime(dto.getPrepareTime());
+
+        recipeRepository.removeRecipeCategories(recipe.getId());
+        recipeRepository.removeRecipeIngredients(recipe.getId());
+
+        addRecipeIngredients(recipe, recipe.getIngredients());
+        addRecipeCategories(recipe, recipe.getCategories());
+
         recipeRepository.save(recipe);
 
         return CoversionService.toDto(recipe);
     }
-
     @Transactional
     public void delete(Long id) throws ResourceNotFoundException {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Recipe %s not found", id)));
 
-        // Provizorní řešení, aby šel odstranit Recipe.
-        // Když použiji cascade, tak mi to smaže i AppUser a všechny jeho potomky
-
         recipeRepository.removeRecipeCategories(id);
         recipeRepository.removeRecipeIngredients(id);
         recipe.setOwner(null);
-
         recipeRepository.save(recipe);
-
         recipeRepository.delete(recipe);
     }
 
@@ -133,19 +133,16 @@ public class RecipeService {
     }
 
     public List<RecipeDtoInOut> findRecipesByOwner(Long id) {
-        List<RecipeDtoInOut> listDto = recipeRepository.findAllByOwner(appUserRepository.findById(id).orElse(null))
+
+        return recipeRepository.findAllByOwner(appUserRepository.findById(id).orElse(null))
                 .stream()
                 .map(CoversionService::toDto)
                 .collect(Collectors.toList());
-
-        return listDto;
     }
 
     public List<RecipeDtoInOut> findFavoriteRecipes(Long id) {
         AppUser appUser = appUserRepository.findById(id).orElse(null);
-        List<RecipeDtoInOut> listDto = appUser.getFavoriteRecipes().stream().map(CoversionService::toDto).collect(Collectors.toList());
-        //System.out.println(appUser.getFavoriteRecipes());
-        return listDto;
+        return appUser.getFavoriteRecipes().stream().map(CoversionService::toDto).collect(Collectors.toList());
     }
 
     public void deleteFavorite(Long recipeId, Long userId) {
@@ -155,16 +152,6 @@ public class RecipeService {
     public boolean isUserFavorite(Long recipeId, Long userId) {
         return recipeRepository.isUserFavorite(recipeId, userId);
     }
-
-    public List<RecipeDtoInOut> recipeContainsString(String name) {
-        List<RecipeDtoInOut> listDto = recipeRepository.findAllByNameContains(name)
-                .stream()
-                .map(CoversionService::toDto)
-                .collect(Collectors.toList());
-
-        return listDto;
-    }
-
     public Integer getCountOfRecipes() {
         return recipeRepository.getCountOfRecipes();
     }
@@ -175,23 +162,20 @@ public class RecipeService {
 
     public List<RecipeDtoInOut> findAllByPage(Integer page, Integer items, String sort){
         Sort sortObject = getSort(sort);
-        List<RecipeDtoInOut> allRecipes = recipeRepository.findAll(PageRequest.of(page, items, sortObject))
+
+        return recipeRepository.findAll(PageRequest.of(page, items, sortObject))
                 .stream()
                 .map(CoversionService::toDto)
                 .collect(Collectors.toList());
-
-        return allRecipes;
     }
 
     public List<RecipeDtoInOut> findAllByNameLike(Integer page, Integer items, String name, String sort){
         Sort sortObject = getSort(sort);
 
-        List<RecipeDtoInOut> allRecipes = recipeRepository.findByNameContaining(PageRequest.of(page, items, sortObject), name)
+        return recipeRepository.findByNameContaining(PageRequest.of(page, items, sortObject), name)
                 .stream()
                 .map(CoversionService::toDto)
                 .collect(Collectors.toList());
-
-        return allRecipes;
     }
 
     public void addToFavorite(Long recipeId, Long userId) {

@@ -1,6 +1,5 @@
 package cs.upce.fei.prudkytomas.cookbook.controller;
 
-import cs.upce.fei.prudkytomas.cookbook.domain.Recipe;
 import cs.upce.fei.prudkytomas.cookbook.dto.RecipeDtoInOut;
 import cs.upce.fei.prudkytomas.cookbook.errors.ResourceNotFoundException;
 import cs.upce.fei.prudkytomas.cookbook.service.RecipeService;
@@ -10,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -33,13 +31,13 @@ public class RecipeController {
 
     @GetMapping("/owner/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<List<RecipeDtoInOut>> findUserRecipes(@PathVariable Long id) throws  ResourceNotFoundException {
+    public ResponseEntity<List<RecipeDtoInOut>> findUserRecipes(@PathVariable Long id) {
         return ResponseEntity.ok(recipeService.findRecipesByOwner(id));
     }
 
     @GetMapping("/favorite/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<List<RecipeDtoInOut>> findUserFavorites(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<List<RecipeDtoInOut>> findUserFavorites(@PathVariable Long id) {
         return ResponseEntity.ok(recipeService.findFavoriteRecipes(id));
     }
 
@@ -49,7 +47,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.create(recipeDtoInOut));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<RecipeDtoInOut> updateRecipe(@RequestBody @Validated RecipeDtoInOut recipe, @PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(recipeService.update(id, recipe));
@@ -64,14 +62,14 @@ public class RecipeController {
 
     @DeleteMapping("/{recipeId}/{userId}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<?> deleteFavorite(@PathVariable Long recipeId, @PathVariable Long userId) throws ResourceNotFoundException {
+    public ResponseEntity<?> deleteFavorite(@PathVariable Long recipeId, @PathVariable Long userId) {
         recipeService.deleteFavorite(recipeId, userId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{recipeId}/{userId}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<?> isRecipeFavorite(@PathVariable Long recipeId, @PathVariable Long userId) throws ResourceNotFoundException {
+    public ResponseEntity<?> isRecipeFavorite(@PathVariable Long recipeId, @PathVariable Long userId) {
         return ResponseEntity.ok(recipeService.isUserFavorite(recipeId, userId));
     }
 
@@ -99,7 +97,7 @@ public class RecipeController {
 
     @PostMapping("/{recipeId}/{userId}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<?> addToFavorite(@PathVariable Long recipeId, @PathVariable Long userId) throws ResourceNotFoundException {
+    public ResponseEntity<?> addToFavorite(@PathVariable Long recipeId, @PathVariable Long userId) {
         recipeService.addToFavorite(recipeId, userId);
         return ResponseEntity.ok().build();
     }
